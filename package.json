@@ -11,7 +11,7 @@
     "build": "tsc --build",
     "lint": "eslint --ext .ts,.tsx .",
     "dev": "lerna run dev --stream",
-    "prettify": "prettier .",
+    "prettify": "npx pretty-quick",
     "start": "lerna run start --stream",
     "start:client": "yarn workspace @showcase/singlepageapplication start",
     "start:server": "yarn workspace @showcase/restapi start",
