@@ -2,7 +2,7 @@
   "eslint.workingDirectories": [{ "directory": "packages/*", "changeProcessCWD": true }],
   "eslint.options": {
     "overrideConfigFile": ".eslintrc.json",
-    "extensions": [".js", ".jsx", ".ts", ".tsx"]
+    "extensions": [".ts", ".tsx"]
   },
   "prettier.requireConfig": true,
   "prettier.configPath": ".prettierrc",

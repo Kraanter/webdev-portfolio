@@ -1,12 +1,8 @@
+import { LoginResponse } from '@showcase/restapi/types';
 import { LoginFormData } from '../components/login/Fields';
-import { UserData, useUser } from '../hooks/storage';
+import { useUser } from '../hooks/storage';
 
 const API_ENDPOINT = '/api';
-
-interface LoginResponse {
-  token: string;
-  user: UserData
-}
 
 /**
  * Login the user
@@ -23,7 +19,7 @@ export async function login(formData: LoginFormData): Promise<boolean> {
     body: JSON.stringify(formData),
   });
 
-  const { token, user } = await response.json() as LoginResponse;
+  const { token, user } = (await response.json()) as LoginResponse;
 
   if (token) {
     console.log('reponse', token, user);

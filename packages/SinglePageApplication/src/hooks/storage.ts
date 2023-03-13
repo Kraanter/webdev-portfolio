@@ -1,3 +1,4 @@
+import { UserData } from '@showcase/restapi/types';
 import { useState } from 'react';
 
 export type Storage = 'local' | 'session';
@@ -38,10 +39,5 @@ export const useStorage = <T>(key: string, initialValue: T, storage: Storage): [
 
   return [storedValue, saveStoredValue, removeStoredValue];
 };
-
-export interface UserData {
-  id: string;
-  name: string;
-}
 
 export const useUser = () => useStorage<UserData | undefined>('user', undefined, 'local');

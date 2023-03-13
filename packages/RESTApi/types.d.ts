@@ -1,6 +1,31 @@
 import { FastifyInstance, FastifyLoggerInstance, FastifyTypeProviderDefault } from 'fastify';
-import { Http2SecureServer, Http2ServerRequest, Http2ServerResponse } from 'http2';
 import { IncomingMessage, Server, ServerResponse } from 'http';
+import { Http2SecureServer, Http2ServerRequest, Http2ServerResponse } from 'http2';
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+type AuthRepsonse =
+  | {
+      decoded: any;
+      authenticated: true;
+    }
+  | {
+      authenticated: false;
+      message: string;
+    };
+
+export interface UserData {
+  id: string;
+  username: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: UserData;
+}
 
 type _AppServer = FastifyInstance<
   Http2SecureServer | Server,
@@ -10,7 +35,7 @@ type _AppServer = FastifyInstance<
   FastifyTypeProviderDefault
 >;
 
-export type AppServer = _AppServer
+export type AppServer = _AppServer;
 
 declare global {
   namespace NodeJS {
