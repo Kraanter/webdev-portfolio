@@ -7,17 +7,11 @@
   "workspaces": [
     "packages/*"
   ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint && yarn prettify",
-      "pre-push": "yarn lint && yarn prettify"
-    }
-  },
   "scripts": {
     "build": "tsc --build",
     "lint": "eslint --ext .ts,.tsx .",
     "dev": "lerna run dev --stream",
-    "prettify": "prettier --write .",
+    "prettify": "prettier .",
     "start": "lerna run start --stream",
     "start:client": "yarn workspace @showcase/singlepageapplication start",
     "start:server": "yarn workspace @showcase/restapi start",
@@ -42,6 +36,7 @@
   },
   "devDependencies": {
     "husky": "^8.0.0",
-    "pnpm": "^7.29.1"
+    "pnpm": "^7.29.1",
+    "pretty-quick": "^3.1.3"
   }
 }
