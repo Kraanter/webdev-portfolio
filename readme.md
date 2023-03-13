@@ -11,13 +11,18 @@
 
 1. Clone de repository
 2. Run de docker container met `docker-compose up -d`
-   > Als je geen docker hebt, installeer het dan [hier](https://docs.docker.com/get-docker/)
 
-> Als je voor het eerst deze repository cloned, dan moet je de docker container builden met `docker-compose up -d --build` 3. Run `lerna bootstrap` om de packages te installeren 4. Run `lerna run start` om de packages te starten 5. Ga naar `localhost:3000` om de website te bekijken
-> Je kan op de website inloggen als docent met de volgende gegevens:
->
-> - username: `admin`
-> - password: `admin`
+   > Als je geen docker hebt, installeer het dan [hier](https://docs.docker.com/get-docker/).
+
+   > Als je voor het eerst deze repository cloned, dan moet je de docker container builden met `docker-compose up -d --build`.
+
+3. Run `lerna bootstrap` om de packages te installeren
+4. Run `lerna run start` om de packages te starten
+5. Ga naar `localhost:3000` om de website te bekijken
+   > Je kan op de website inloggen als docent met de volgende gegevens:
+   >
+   > - username: `admin`
+   > - password: `admin`
 
 ## Troubleshooting
 
