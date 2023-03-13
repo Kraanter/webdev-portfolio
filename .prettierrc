@@ -1,0 +1,16 @@
+{
+  "trailingComma": "es5",
+  "printWidth": 120,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "semi": true,
+  "useTabs": false,
+  "plugins": ["prettier-plugin-organize-imports"],
+  "organizeImports": {
+    "type": "alphabetize",
+    "ignoreCase": true,
+    "ignoreDeclarationSort": true,
+    "ignoreMemberSort": false,
+    "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+  }
+}

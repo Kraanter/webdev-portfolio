@@ -1,0 +1,12 @@
+{
+  "eslint.workingDirectories": [{ "directory": "packages/*", "changeProcessCWD": true }],
+  "eslint.options": {
+    "overrideConfigFile": ".eslintrc.json",
+    "extensions": [".js", ".jsx", ".ts", ".tsx"]
+  },
+  "prettier.requireConfig": true,
+  "prettier.configPath": ".prettierrc",
+  "files.exclude": {
+    "**/.git": false
+  }
+}
