@@ -1,7 +1,9 @@
+import { UserData } from '@showcase/restapi/types';
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import useSWR from 'swr';
 import { fetcher } from '../api/fetcher';
+import { useStorage } from '../util/storage';
 import DocentLayout from './wrappers/DocentLayout';
 import EmptyWrapper from './wrappers/EmptyLayout';
 
@@ -12,11 +14,13 @@ interface RouteGuardProps {
 
 const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent = false }) => {
   const { data, isLoading, error } = useSWR('/api/auth', fetcher('POST'));
+  const [, storeUser] = useStorage<undefined | UserData>('user', undefined, 'session');
 
   const isAuthenticated = !!data?.authenticated;
 
   const Wrapper = docent ? DocentLayout : EmptyWrapper;
 
+  if (data?.decoded.username) storeUser(data.decoded);
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
   if (isAuthenticated !== authenticated) return <Navigate to={authenticated ? '/login' : '/docent'} />;
@@ -26,6 +30,5 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent =
     </Wrapper>
   );
 };
-
 
 export default RouteGuard;

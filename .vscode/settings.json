@@ -8,5 +8,8 @@
   "prettier.configPath": ".prettierrc",
   "files.exclude": {
     "**/.git": false
-  }
+  },
+  "python.analysis.importFormat": "relative",
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative"
 }

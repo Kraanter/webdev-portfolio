@@ -1,17 +1,12 @@
-import { LoginResponse } from '@showcase/restapi/types';
+import { UserData } from '@showcase/restapi/types';
 import { LoginFormData } from '../components/login/Fields';
-import { useUser } from '../hooks/storage';
+import { useStorage } from '../util/storage';
 
 const API_ENDPOINT = '/api';
 
-/**
- * Login the user
- * @param formData
- * @returns true if login was successful
- */
-export async function login(formData: LoginFormData): Promise<boolean> {
-  const [, setUser, removeUser] = await useUser();
-  const response = await fetch(API_ENDPOINT + '/login', {
+export async function fetchUser(type: 'login' | 'register', formData: LoginFormData) {
+  const [, setUser, removeUser] = useStorage<UserData | undefined>('user', undefined, 'local');
+  const response = await fetch(API_ENDPOINT + '/' + type, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -19,7 +14,7 @@ export async function login(formData: LoginFormData): Promise<boolean> {
     body: JSON.stringify(formData),
   });
 
-  const { token, user } = (await response.json()) as LoginResponse;
+  const { token, user } = await response.json();
 
   if (token) {
     console.log('reponse', token, user);

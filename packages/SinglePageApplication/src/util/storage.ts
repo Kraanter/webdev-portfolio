@@ -1,9 +1,10 @@
-import { UserData } from '@showcase/restapi/types';
-import { useState } from 'react';
-
 export type Storage = 'local' | 'session';
 
-export const useStorage = <T>(key: string, initialValue: T, storage: Storage): [T, (value: T) => void, () => void] => {
+export const useStorage = <T>(
+  key: string,
+  initialValue: T,
+  storage: Storage
+): [() => T, (value: T) => void, () => void] => {
   const storageObject = storage === 'local' ? localStorage : sessionStorage;
 
   function getLocalStorageValue() {
@@ -16,13 +17,11 @@ export const useStorage = <T>(key: string, initialValue: T, storage: Storage): [
     }
   }
 
-  const [storedValue, setStoredValue] = useState(getLocalStorageValue());
-
   const saveStoredValue = (value: any) => {
+    console.log('saveStoredValue', value);
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore = value instanceof Function ? value(getLocalStorageValue()) : value;
       storageObject.setItem(key, JSON.stringify(valueToStore));
-      setStoredValue(valueToStore);
     } catch (error) {
       console.log(error);
     }
@@ -31,13 +30,10 @@ export const useStorage = <T>(key: string, initialValue: T, storage: Storage): [
   const removeStoredValue = () => {
     try {
       storageObject.removeItem(key);
-      setStoredValue(initialValue);
     } catch (error) {
       console.log(error);
     }
   };
 
-  return [storedValue, saveStoredValue, removeStoredValue];
+  return [getLocalStorageValue, saveStoredValue, removeStoredValue];
 };
-
-export const useUser = () => useStorage<UserData | undefined>('user', undefined, 'local');

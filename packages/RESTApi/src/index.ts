@@ -1,13 +1,13 @@
-import Fastify from 'fastify';
-import fastifyPostgres from '@fastify/postgres';
-import * as dotenv from 'dotenv';
-import authRoutes from './routes/auth';
-import addJWT from './plugins/jwt-token';
 import fastifyCookie from '@fastify/cookie';
-dotenv.config();
+import fastifyPostgres from '@fastify/postgres';
+import { config } from 'dotenv';
+import Fastify from 'fastify';
+import addJWT from './plugins/jwt-token';
+import authRoutes from './routes/auth';
+config();
 
 const fastify = Fastify({
-  // only log info 
+  // only log info
   logger: {
     level: 'info',
   },
