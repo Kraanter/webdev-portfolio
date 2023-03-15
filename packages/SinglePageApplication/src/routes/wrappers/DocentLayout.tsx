@@ -57,6 +57,7 @@ const Navbar = () => {
           >
             <path d="M5 12h14M12 5l7 7-7 7"></path>
           </svg>
+          <img src={`https://api.dicebear.com/5.x/pixel-art/svg?seed=${user?.username}`} className="h-8 w-8" />
         </button>
       </div>
     </header>

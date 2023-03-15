@@ -18,7 +18,6 @@ export const useStorage = <T>(
   }
 
   const saveStoredValue = (value: any) => {
-    console.log('saveStoredValue', value);
     try {
       const valueToStore = value instanceof Function ? value(getLocalStorageValue()) : value;
       storageObject.setItem(key, JSON.stringify(valueToStore));

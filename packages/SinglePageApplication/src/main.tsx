@@ -10,7 +10,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/logout" element={<Login logout />} />
+        <Route path="/logout" element={<RouteGuard logout />}>
+          <Route index element={<Login logout />} />
+        </Route>
         <Route index element={<Navigate replace to="/docent" />} />
         <Route path="/login" element={<RouteGuard />}>
           <Route path="" element={<Login />} />

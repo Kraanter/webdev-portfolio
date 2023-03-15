@@ -1,11 +1,12 @@
 import { UserData } from '@showcase/restapi/types';
+import { fetcher } from '../api/fetcher';
 import { LoginFormData } from '../components/login/Fields';
 import { useStorage } from '../util/storage';
 
 const API_ENDPOINT = '/api';
 
 export async function fetchUser(type: 'login' | 'register', formData: LoginFormData) {
-  const [, setUser, removeUser] = useStorage<UserData | undefined>('user', undefined, 'local');
+  const [, setUser, removeUser] = useStorage<UserData | undefined>('user', undefined, 'session');
   const response = await fetch(API_ENDPOINT + '/' + type, {
     method: 'POST',
     headers: {
@@ -23,4 +24,15 @@ export async function fetchUser(type: 'login' | 'register', formData: LoginFormD
   }
   removeUser();
   return false;
+}
+
+export async function logoutUser() {
+  const [, , removeUser] = useStorage<UserData | undefined>('user', undefined, 'session');
+  const [, , removeToken] = useStorage<string | undefined>('token', undefined, 'session');
+  const response = await fetcher('GET')(API_ENDPOINT + '/logout');
+
+  if (response.status === 200) {
+    removeUser();
+    removeToken();
+  }
 }

@@ -10,20 +10,23 @@ import EmptyWrapper from './wrappers/EmptyLayout';
 interface RouteGuardProps {
   docent?: boolean;
   authenticated?: boolean;
+  logout?: boolean;
 }
 
-const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent = false }) => {
-  const { data, isLoading, error } = useSWR('/api/auth', fetcher('POST'));
-  const [, storeUser] = useStorage<undefined | UserData>('user', undefined, 'session');
+const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent = false, logout = false }) => {
+  const [, storeUser, removeUser] = useStorage<undefined | UserData>('user', undefined, 'session');
 
-  const isAuthenticated = !!data?.authenticated;
+  if (logout) {
+    removeUser();
+  } else {
+    const { data, isLoading, error } = useSWR('/api/auth', fetcher('POST'));
+    const isAuthenticated = !!data?.authenticated;
+    if (error) return <div>Error</div>;
+    if (isLoading) return <div></div>;
+    if (isAuthenticated !== authenticated) return <Navigate to={authenticated ? '/login' : '/docent'} />;
+  }
 
   const Wrapper = docent ? DocentLayout : EmptyWrapper;
-
-  if (data?.decoded.username) storeUser(data.decoded);
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
-  if (isAuthenticated !== authenticated) return <Navigate to={authenticated ? '/login' : '/docent'} />;
   return (
     <Wrapper>
       <Outlet />
