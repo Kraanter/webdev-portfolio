@@ -1,0 +1,7 @@
+# github & git files
+.*
+!.gitignore
+
+**/node_modules
+**/dist
+**/build

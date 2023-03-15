@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "tsc --build",
+    "build": "lerna bootstrap && lerna run build --stream",
     "lint": "eslint --ext .ts,.tsx .",
     "dev": "lerna run dev --stream",
     "prettify": "npx pretty-quick",
