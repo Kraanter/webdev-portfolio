@@ -1,11 +1,10 @@
-
 export enum ErrorMessages {
   Empty = '',
   FillAll = 'Vul alle velden in',
   ValidEmail = 'Vul een geldig e-mailadres in',
   UsernameLength = 'Gebruikersnaam moet tussen de 3 karakters lang zijn',
   PasswordLength = 'Wachtwoord moet tussen de 12 en 128 karakters lang zijn',
-  PasswordMatch = 'Wachtwoorden komen niet overeen'
+  PasswordMatch = 'Wachtwoorden komen niet overeen',
 }
 
 export function isValidationError(error: Error): error is ValidationError {
@@ -23,8 +22,8 @@ export function checkForm(name: string, password: string, password2?: string, is
   try {
     nameCheck(name);
     passwordCheck(password, password2, isRegister);
-  } catch (error: any) {
-    return checkForValidationError(error);
+  } catch (error: unknown) {
+    return checkForValidationError(error as Error);
   }
   return null;
 }

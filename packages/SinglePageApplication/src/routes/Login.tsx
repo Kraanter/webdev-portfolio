@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ErrorMessages } from '../components/login/checks';
-import { LoginFormData, LoginInput } from '../components/login/Fields';
+import { ErrorMessages } from '../components/docent/login/checks';
+import { LoginFormData, LoginInput } from '../components/docent/login/Fields';
 import { fetchUser, logoutUser } from '../logic/login';
 
 interface LoginProps {

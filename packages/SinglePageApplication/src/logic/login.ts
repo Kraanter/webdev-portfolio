@@ -1,6 +1,6 @@
 import { UserData } from '@showcase/restapi/types';
 import { fetcher } from '../api/fetcher';
-import { LoginFormData } from '../components/login/Fields';
+import { LoginFormData } from '../components/docent/login/Fields';
 import { useStorage } from '../util/storage';
 
 const API_ENDPOINT = '/api';

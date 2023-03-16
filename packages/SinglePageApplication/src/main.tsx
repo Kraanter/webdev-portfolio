@@ -5,6 +5,8 @@ import './index.css';
 import Docent from './routes/Docent';
 import Login from './routes/Login';
 import RouteGuard from './routes/RouteGuard';
+import Student from './routes/Student';
+import StudentRouteGuard from './routes/StudentRouteGuard';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -20,6 +22,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/register" element={<Login register />} />
         <Route path="/docent" element={<RouteGuard authenticated docent />}>
           <Route path="" element={<Docent />} />
+        </Route>
+        <Route path="/student" element={<StudentRouteGuard />}>
+          <Route path="" element={<Student />} />
         </Route>
       </Routes>
     </BrowserRouter>

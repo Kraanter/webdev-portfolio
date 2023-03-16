@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDebounce } from '../../util/debounce';
+import { useDebounce } from '../../../util/debounce';
 import { checkForm } from './checks';
 
 const DEBOUNCE_TIME = 50;
