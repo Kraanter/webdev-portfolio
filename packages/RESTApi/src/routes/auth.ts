@@ -6,15 +6,13 @@ async function authRoutes(fastify: AppServer) {
   client.connect();
 
   fastify.post('/auth', async (request, reply) => {
-    const { token } = request.cookies;
-
-    try {
-      const decoded = await fastify.jwt.verify(token ?? '');
-      const resp: AuthRepsonse = { decoded, authenticated: true };
+    if (request.user) {
+      const user = request.user as UserData;
+      const resp: AuthRepsonse = { decoded: user, authenticated: true };
       reply.send(resp);
-    } catch (err) {
-      reply.send({ authenticated: false, message: 'Invalid token' });
+      return;
     }
+    reply.send({ authenticated: false, message: 'Invalid token' });
   });
 
   fastify.get('/logout', async (request, reply) => {
@@ -32,12 +30,12 @@ async function authRoutes(fastify: AppServer) {
 
     // if password matches, generate token and send it back
     if (isMatch) {
-      const token = fastify.jwt.sign({ username });
-
       const user: UserData = {
         id: rows[0].id,
         username: rows[0].username,
       };
+      const token = fastify.jwt.sign(user);
+
       const replyData: LoginResponse = { token, user };
 
       // add token to cookie
@@ -60,15 +58,15 @@ async function authRoutes(fastify: AppServer) {
     // hash password using bcrypt
     const hashedPassword = await hash(password, 10);
 
-    const { rows } = await client.query('INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING *', [
-      username.toLowerCase(),
-      hashedPassword,
-    ]);
+    const { rows } = await client.query(
+      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username',
+      [username.toLowerCase(), hashedPassword]
+    );
 
     if (rows.length === 0) {
       reply.code(401).send({ message: 'Invalid username or password' });
     } else {
-      const token = fastify.jwt.sign({ username });
+      const token = fastify.jwt.sign(rows[0]);
       const user: UserData = {
         id: rows[0].id,
         username: rows[0].username,

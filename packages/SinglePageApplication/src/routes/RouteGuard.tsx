@@ -14,13 +14,15 @@ interface RouteGuardProps {
 }
 
 const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent = false, logout = false }) => {
-  const [, storeUser, removeUser] = useStorage<undefined | UserData>('user', undefined, 'session');
+  const [, setUser, removeUser] = useStorage<undefined | UserData>('user', undefined, 'session');
 
   if (logout) {
     removeUser();
   } else {
     const { data, isLoading, error } = useSWR('/api/auth', fetcher('POST'));
     const isAuthenticated = !!data?.authenticated;
+    const user = data?.decoded as UserData;
+    if (user) setUser(user);
     if (error) return <div>Error</div>;
     if (isLoading) return <div></div>;
     if (isAuthenticated !== authenticated) return <Navigate to={authenticated ? '/login' : '/docent'} />;

@@ -9,7 +9,7 @@ export interface LoginRequest {
 
 type AuthRepsonse =
   | {
-      decoded: any;
+      decoded: UserData;
       authenticated: true;
     }
   | {
@@ -20,6 +20,12 @@ type AuthRepsonse =
 export interface UserData {
   id: string;
   username: string;
+}
+
+export interface GroupData {
+  name: string;
+  code: string;
+  online: number;
 }
 
 export interface LoginResponse {
