@@ -1,6 +1,7 @@
 # github & git files
 .*
 !.gitignore
+!.github
 
 **/node_modules
 **/dist
