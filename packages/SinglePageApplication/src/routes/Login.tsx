@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ErrorMessages } from '../components/login/checks';
 import { LoginFormData, LoginInput } from '../components/login/Fields';
-import { fetchUser } from '../logic/login';
-import { useStorage } from '../util/storage';
+import { fetchUser, logoutUser } from '../logic/login';
 
 interface LoginProps {
   register?: boolean;
@@ -15,23 +14,11 @@ const Login: React.FC<LoginProps> = ({ register = false, logout = false }) => {
   const [isRegister, setIsRegister] = useState(register);
   const [formData, setFormData] = useState<LoginFormData>({ username: '', password: '' });
   const [error, setError] = useState('');
-  const [, setToken] = useStorage('token', '', 'session');
   const type = isRegister ? 'register' : 'login';
 
   useEffect(() => {
     if (logout) {
-      const logout = async () => {
-        const test = await fetch('/api/logout', {
-          method: 'GET',
-        });
-        if (test.status !== 200) {
-          console.log('error', test);
-          return;
-        }
-        setToken('');
-        navigate('/login');
-      };
-      logout();
+      logoutUser().then(() => navigate('/login'));
     }
   }, []);
 

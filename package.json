@@ -15,7 +15,11 @@
     "start": "lerna run start --stream",
     "start:client": "yarn workspace @showcase/singlepageapplication start",
     "start:server": "yarn workspace @showcase/restapi start",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docker": "docker-compose up -d",
+    "docker:clean": "docker-compose down -v",
+    "docker:reset": "yarn docker:clean && yarn docker",
+    "docker:stop": "docker-compose stop"
   },
   "dependencies": {
     "@types/node": "^18.15.1",
