@@ -1,16 +1,12 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import useSWR from 'swr';
-import { fetcher } from '../api/fetcher';
-import Login from '../components/student/login/Login';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useStorage } from '../util/storage';
 import StudentWrapper from './wrappers/StudentWrapper';
 
 const StudentRouteGuard: React.FC = () => {
-  const { data, isLoading, error } = useSWR('/api/student/login', fetcher('POST'));
+  const [getSession] = useStorage('session', '', 'session');
 
-  if (error) return <div>Error</div>;
-  if (isLoading) return <div></div>;
-  if (!data?.authenticated) return <Login />;
+  if (!getSession()) return <Navigate replace to="/student/login" />;
 
   return (
     <StudentWrapper>

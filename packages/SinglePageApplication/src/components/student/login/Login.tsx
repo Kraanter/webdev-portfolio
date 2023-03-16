@@ -1,26 +1,47 @@
 import React from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { fetcher } from '../../../api/fetcher';
+import { useStorage } from '../../../util/storage';
 
 const Login: React.FC = () => {
   const [error, setError] = React.useState('');
   const [formData, setFormData] = React.useState({ name: '', code: '' });
+  const [getSession, setSession] = useStorage('session', '', 'session');
+  const navigate = useNavigate();
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  if (getSession() !== '') return <Navigate replace to="/student" />;
+
+  React.useEffect(() => {
+    if (error === '') return;
+    const timeout = setTimeout(() => {
+      setError('');
+    }, 3000);
+    return () => clearTimeout(timeout);
+  }, [error]);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (error !== '' && error !== 'Fill all fields') return;
     if (formData.name === '' || formData.code === '') {
-      setError('Fill all fields');
+      setError('Vul alle velden in');
       return;
     }
     if (formData.code.length !== 4) {
-      setError('Code must be 4 characters long');
+      setError('Code moet 4 karakters lang zijn');
       return;
     }
     if (formData.name.length < 3) {
-      setError('Name must be at least 3 characters long');
+      setError('Naam moet minimaal 3 karakters lang zijn');
       return;
     }
-    console.log(formData);
+    const response = await fetcher('POST')('/api/student/login', JSON.stringify(formData));
+    if (response.error) {
+      setError('De ingevoerde code bestaat niet');
+      return;
+    }
+    setSession(response.session);
     setError('');
+    navigate('/student');
   };
 
   return (
@@ -48,7 +69,7 @@ const Login: React.FC = () => {
           <p className="text-red-500 font-semibold text-center">{error}</p>
           <button
             type="submit"
-            className="w-full flex-1 py-2 mt-8 rounded-full bg-orange-400 text-white focus:outline-none hover:bg-orange-500"
+            className="w-full text-3xl font-semibold py-2 mt-8 rounded-full bg-orange-400 text-white focus:outline-none hover:bg-orange-500"
           >
             Start
           </button>

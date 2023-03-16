@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import StudentLogin from './components/student/login/Login';
 import './index.css';
 import Docent from './routes/Docent';
 import Login from './routes/Login';
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/docent" element={<RouteGuard authenticated docent />}>
           <Route path="" element={<Docent />} />
         </Route>
+        <Route path="/student/login" element={<StudentLogin />} />
         <Route path="/student" element={<StudentRouteGuard />}>
           <Route path="" element={<Student />} />
         </Route>
