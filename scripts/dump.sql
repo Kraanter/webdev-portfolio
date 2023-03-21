@@ -14,6 +14,24 @@ CREATE TABLE IF NOT EXISTS groups (
     creator_id SERIAL NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Create Table: students
+CREATE TABLE IF NOT EXISTS students (
+    id SERIAL UNIQUE NOT NULL,
+    name VARCHAR(25) NOT NULL,
+    group_code CHAR(4) NOT NULL REFERENCES groups(code) ON DELETE CASCADE,
+    PRIMARY KEY (name, group_code)
+);
+
+-- Create Table: sessions
+CREATE TABLE IF NOT EXISTS sessions (
+    id SERIAL PRIMARY KEY,
+    student_id SERIAL NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    token text NOT NULL,
+    last_updated TIMESTAMP NOT NULL DEFAULT NOW()
+    -- Update last_updated when token is updated
+    CONSTRAINT sessions_token_check CHECK (last_updated = NOW())
+);
+
 -- Seed Table: users with admin user
 -- Password: admin
 INSERT INTO users (username, password_hash) VALUES ('admin', E'$2b$10$Zv0WxzXyUkxpJJrZqv7zLOeC9xtGGyP15Yvn.6AVtLM6nbLUgx6nq');

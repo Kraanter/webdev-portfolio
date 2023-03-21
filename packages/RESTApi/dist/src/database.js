@@ -1,12 +1,15 @@
-import { PostgresDb } from '@fastify/postgres';
-import { GroupData, SessionData, StudentData, StudentLoginRequest } from '../types';
-
-type DatabaseClient = PostgresDb;
-
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.removeSession =
+  exports.getSession =
+  exports.createSession =
+  exports.registerStudent =
+  exports.createGroup =
+  exports.checkGroupCode =
+    void 0;
 /*
  * This file contains all the database queries used in the REST API.
  */
-
 /**
  * Check if a group code is already in use in the database
  * @param code The group code to check
@@ -21,20 +24,24 @@ type DatabaseClient = PostgresDb;
  * }
  * });
  **/
-export function checkGroupCode(code: string, client: DatabaseClient) {
+function checkGroupCode(code, client) {
+  var _a;
   // Check if the code is already in use in the database
   // This assumes you have a database table called "groups" with a column "code"
   const query = 'SELECT code FROM groups WHERE code = $1';
-
   try {
     const result = client.query(query, [code]);
-    return result?.rows?.length > 0;
+    return (
+      ((_a = result === null || result === void 0 ? void 0 : result.rows) === null || _a === void 0
+        ? void 0
+        : _a.length) > 0
+    );
   } catch (err) {
     console.log('Query error: ', err);
     return false;
   }
 }
-
+exports.checkGroupCode = checkGroupCode;
 /**
  * Create a new group in the database
  * @param {GroupData} group The group data to create.
@@ -49,10 +56,9 @@ export function checkGroupCode(code: string, client: DatabaseClient) {
  * }
  * });
  **/
-export async function createGroup({ name, code }: GroupData, userId: number | string, client: DatabaseClient) {
+async function createGroup({ name, code }, userId, client) {
   // Create a new group in the database
   const query = 'INSERT INTO groups (name, code, creator_id) VALUES ($1, $2, $3) RETURNING name, code';
-
   try {
     const result = await client.query(query, [name, code, userId]);
     return result.rows[0];
@@ -61,29 +67,27 @@ export async function createGroup({ name, code }: GroupData, userId: number | st
     return null;
   }
 }
-
-export async function registerStudent({ name, code }: StudentLoginRequest, client: DatabaseClient) {
+exports.createGroup = createGroup;
+async function registerStudent({ name, code }, client) {
   const { rows } = await client.query('SELECT code FROM groups WHERE code = $1', [code]);
   if (rows.length === 0) throw new Error('Group does not exist');
-
   // If student already exists, return student
   const { rows: studentRows } = await client.query('SELECT * FROM students WHERE name = $1 AND group_code = $2', [
     name,
     rows[0].code,
   ]);
   if (studentRows.length > 0) {
-    return studentRows[0] as StudentData;
+    return studentRows[0];
   }
-
   // Insert student into database if it doesn't exist
   const { rows: insertRows } = await client.query(
     'INSERT INTO students (name, group_code) VALUES ($1, $2) RETURNING *',
     [name, rows[0].code]
   );
-  return insertRows[0] as StudentData;
+  return insertRows[0];
 }
-
-export async function createSession({ student_id, token }: SessionData, client: DatabaseClient) {
+exports.registerStudent = registerStudent;
+async function createSession({ student_id, token }, client) {
   const { rows } = await client.query('SELECT * FROM sessions WHERE student_id = $1', [student_id]);
   if (rows.length > 0) {
     // Update session
@@ -91,22 +95,24 @@ export async function createSession({ student_id, token }: SessionData, client: 
       'UPDATE sessions SET token = $1, last_updated = now() WHERE student_id = $2 RETURNING *',
       [token, student_id]
     );
-    return updateRows[0] as SessionData;
+    return updateRows[0];
   }
   const { rows: insertRows } = await client.query(
     'INSERT INTO sessions (student_id, token) VALUES ($1, $2) RETURNING *',
     [student_id, token]
   );
-  return insertRows[0] as SessionData;
+  return insertRows[0];
 }
-
-export async function getSession(token: string, client: DatabaseClient) {
+exports.createSession = createSession;
+async function getSession(token, client) {
   const { rows } = await client.query('SELECT * FROM sessions WHERE token = $1', [token]);
   if (rows.length === 0) return null;
-  return rows[0] as SessionData;
+  return rows[0];
 }
-
-export async function removeSession(token: string, client: DatabaseClient) {
+exports.getSession = getSession;
+async function removeSession(token, client) {
   const { rows } = await client.query('DELETE FROM sessions WHERE token = $1', [token]);
   return rows[0];
 }
+exports.removeSession = removeSession;
+//# sourceMappingURL=database.js.map

@@ -7,6 +7,16 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface StudentLoginRequest {
+  code: string;
+  name: string;
+}
+
+export interface SessionData {
+  student_id: string;
+  token: string;
+}
+
 type AuthRepsonse =
   | {
       decoded: UserData;
@@ -26,6 +36,12 @@ export interface GroupData {
   name: string;
   code: string;
   online: number;
+}
+
+export interface StudentData {
+  id: string;
+  name: string;
+  groupcode: string;
 }
 
 export interface LoginResponse {

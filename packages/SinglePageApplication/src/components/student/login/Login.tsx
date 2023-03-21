@@ -1,12 +1,12 @@
 import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { fetcher } from '../../../api/fetcher';
+import { fetchStudent } from '../../../logic/login';
 import { useStorage } from '../../../util/storage';
 
 const Login: React.FC = () => {
   const [error, setError] = React.useState('');
   const [formData, setFormData] = React.useState({ name: '', code: '' });
-  const [getSession, setSession] = useStorage('session', '', 'session');
+  const [getSession] = useStorage('session', '', 'session');
   const navigate = useNavigate();
 
   if (getSession() !== '') return <Navigate replace to="/student" />;
@@ -34,12 +34,11 @@ const Login: React.FC = () => {
       setError('Naam moet minimaal 3 karakters lang zijn');
       return;
     }
-    const response = await fetcher('POST')('/api/student/login', JSON.stringify(formData));
-    if (response.error) {
+    const response = await fetchStudent(formData);
+    if (!response) {
       setError('De ingevoerde code bestaat niet');
       return;
     }
-    setSession(response.session);
     setError('');
     navigate('/student');
   };
