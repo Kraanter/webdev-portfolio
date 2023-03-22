@@ -9,7 +9,7 @@ export interface LoginRequest {
 
 export interface StudentLoginRequest {
   code: string;
-  name: string;
+  username: string;
 }
 
 export interface SessionData {
@@ -29,6 +29,7 @@ type AuthRepsonse =
 
 export interface UserData {
   id: string;
+  token: string;
   username: string;
 }
 
@@ -40,7 +41,7 @@ export interface GroupData {
 
 export interface StudentData {
   id: string;
-  name: string;
+  username: string;
   groupcode: string;
 }
 

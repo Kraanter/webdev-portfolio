@@ -1,14 +1,16 @@
 import fastifyCookie from '@fastify/cookie';
 import fastifyPostgres from '@fastify/postgres';
-import fastifySocket from '@fastify/websocket';
 import { config } from 'dotenv';
 import Fastify from 'fastify';
+import fastifySocketIO from 'fastify-socket.io';
+import { ServerOptions } from 'socket.io';
 import { UserData } from '../types';
 import addJWT from './plugins/jwt-token';
 import authRoutes from './routes/auth';
 import { groupRoutes } from './routes/group';
 import { socketRoutes } from './routes/socket';
 import { studentRoutes } from './routes/student';
+import { puppeteerSocketServer } from './utils/puppeteer';
 config();
 
 const fastify = Fastify({
@@ -31,6 +33,22 @@ const fastify = Fastify({
   logger: true,
 });
 
+function socketOptions(): Partial<ServerOptions> {
+  const opts: Partial<ServerOptions> = {
+    path: '/browser-streamer',
+  };
+
+  opts.cors = {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true,
+    allowedHeaders: ['student_token', 'token'],
+  };
+
+  return opts;
+}
+
+fastify.register(fastifySocketIO, socketOptions());
 fastify.register(fastifyCookie, {
   secret: process.env.COOKIE_SECRET_KEY,
   hook: 'onRequest',
@@ -39,12 +57,6 @@ fastify.register(fastifyCookie, {
 // initialize fastifyPostgres
 fastify.register(fastifyPostgres, {
   connectionString: process.env.CONNECTION_STRING,
-});
-
-fastify.register(fastifySocket, {
-  options: {
-    maxPayload: 1048576,
-  },
 });
 
 addJWT(fastify);
@@ -59,13 +71,20 @@ fastify.register(socketRoutes);
 
 fastify.addHook('preHandler', async (request) => {
   // add user data to request
-  const { token } = request.cookies;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { token, student_token } = request.cookies;
   try {
-    const decoded = (await fastify.jwt.verify(token ?? '')) as UserData;
+    const decoded = (await fastify.jwt.verify(student_token ?? token ?? '')) as UserData;
+    console.log('decoded', decoded);
+    decoded.token = token ?? '';
     request.user = decoded;
   } catch (err) {
     // do nothing
   }
+});
+
+fastify.ready().then(() => {
+  puppeteerSocketServer(fastify);
 });
 
 const PORT = parseInt(process.env.PORT ?? '3000');

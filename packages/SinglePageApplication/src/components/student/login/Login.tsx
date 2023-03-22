@@ -5,7 +5,7 @@ import { useStorage } from '../../../util/storage';
 
 const Login: React.FC = () => {
   const [error, setError] = React.useState('');
-  const [formData, setFormData] = React.useState({ name: '', code: '' });
+  const [formData, setFormData] = React.useState({ username: '', code: '' });
   const [getSession] = useStorage('session', '', 'session');
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const Login: React.FC = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (error !== '' && error !== 'Fill all fields') return;
-    if (formData.name === '' || formData.code === '') {
+    if (formData.username === '' || formData.code === '') {
       setError('Vul alle velden in');
       return;
     }
@@ -30,7 +30,7 @@ const Login: React.FC = () => {
       setError('Code moet 4 karakters lang zijn');
       return;
     }
-    if (formData.name.length < 3) {
+    if (formData.username.length < 3) {
       setError('Naam moet minimaal 3 karakters lang zijn');
       return;
     }
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
             placeholder="Name"
             minLength={3}
             className="w-full text-center font-bold text-6xl px-4 py-2 mt-4 rounded-md bg-gray-100 focus:outline-none"
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
           />
           <input
             type="text"

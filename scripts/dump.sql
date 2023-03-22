@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS groups (
 -- Create Table: students
 CREATE TABLE IF NOT EXISTS students (
     id SERIAL UNIQUE NOT NULL,
-    name VARCHAR(25) NOT NULL,
+    username VARCHAR(25) NOT NULL,
     group_code CHAR(4) NOT NULL REFERENCES groups(code) ON DELETE CASCADE,
-    PRIMARY KEY (name, group_code)
+    PRIMARY KEY (username, group_code)
 );
 
 -- Create Table: sessions

@@ -33,6 +33,7 @@ async function authRoutes(fastify: AppServer) {
       const user: UserData = {
         id: rows[0].id,
         username: rows[0].username,
+        token: '',
       };
       const token = fastify.jwt.sign(user);
 
@@ -70,6 +71,7 @@ async function authRoutes(fastify: AppServer) {
       const user: UserData = {
         id: rows[0].id,
         username: rows[0].username,
+        token: token,
       };
       const replyData: LoginResponse = { token, user };
 

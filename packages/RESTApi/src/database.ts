@@ -62,13 +62,13 @@ export async function createGroup({ name, code }: GroupData, userId: number | st
   }
 }
 
-export async function registerStudent({ name, code }: StudentLoginRequest, client: DatabaseClient) {
+export async function registerStudent({ username, code }: StudentLoginRequest, client: DatabaseClient) {
   const { rows } = await client.query('SELECT code FROM groups WHERE code = $1', [code]);
   if (rows.length === 0) throw new Error('Group does not exist');
 
   // If student already exists, return student
-  const { rows: studentRows } = await client.query('SELECT * FROM students WHERE name = $1 AND group_code = $2', [
-    name,
+  const { rows: studentRows } = await client.query('SELECT * FROM students WHERE username = $1 AND group_code = $2', [
+    username,
     rows[0].code,
   ]);
   if (studentRows.length > 0) {
@@ -77,8 +77,8 @@ export async function registerStudent({ name, code }: StudentLoginRequest, clien
 
   // Insert student into database if it doesn't exist
   const { rows: insertRows } = await client.query(
-    'INSERT INTO students (name, group_code) VALUES ($1, $2) RETURNING *',
-    [name, rows[0].code]
+    'INSERT INTO students (username, group_code) VALUES ($1, $2) RETURNING *',
+    [username, rows[0].code]
   );
   return insertRows[0] as StudentData;
 }
