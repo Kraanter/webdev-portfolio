@@ -1,15 +1,16 @@
 services:
   db:
     image: postgres
-    container_name: "showcase-db"
+    container_name: 'showcase-db'
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./scripts:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_USERNAME: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "showcase"
+      POSTGRES_USERNAME: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'showcase'
+    restart: unless-stopped
 volumes:
   db_data:

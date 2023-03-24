@@ -10,9 +10,14 @@ const serverOptions: ServerOptions = {
     },
     '/browser-streamer': {
       target: 'ws://localhost:3000',
+      changeOrigin: true,
       ws: true,
     },
   },
+  // strictPort: true,
+  // hmr: {
+  //   port: 3000,
+  // },
 };
 
 // https://vitejs.dev/config/

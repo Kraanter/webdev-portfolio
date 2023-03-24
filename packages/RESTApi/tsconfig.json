@@ -12,7 +12,8 @@
     "declarationMap": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "lib": ["DOM"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

@@ -42,7 +42,12 @@ function socketOptions(): Partial<ServerOptions> {
     origin: '*',
     methods: ['GET', 'POST'],
     credentials: true,
-    allowedHeaders: ['student_token', 'token'],
+  };
+
+  opts.cookie = {
+    name: 'student_token',
+    domain: '/',
+    httpOnly: true,
   };
 
   return opts;
