@@ -12,5 +12,20 @@ services:
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'showcase'
     restart: unless-stopped
+  nginx:
+    image: nginx
+    container_name: 'showcase-nginx'
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./dist:/usr/share/nginx/html
+    restart: unless-stopped
+  # restApi:
+  #   image: showcase-rest-api
+  #   container_name: 'showcase-rest-api'
+  #   ports:
+  #     - '8080:8080'
+  #   restart: unless-stopped
 volumes:
   db_data:

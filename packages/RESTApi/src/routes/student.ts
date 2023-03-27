@@ -15,8 +15,6 @@ export async function studentRoutes(fastify: AppServer) {
 
       const token = fastify.jwt.sign(data);
 
-      // const session = await createSession({ token, student_id: data.id }, client);
-
       // create a cookie with studen token
       reply.setCookie('student_token', token, {
         path: '/',
