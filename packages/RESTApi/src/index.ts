@@ -79,24 +79,25 @@ const JWTTOKENTIME = 60 * 60 * 2;
 fastify.addHook('preHandler', async (request, response) => {
   // add user data to request
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { token, student_token } = request.cookies;
-  if (!token && !student_token) {
+  const { token: docent_token, student_token } = request.cookies;
+  if (!docent_token && !student_token) {
     request.user = {};
-    return;
-  }
-  try {
-    const isStudent = request.url.toLowerCase().indexOf('/student') !== -1;
-    const decoded = (await fastify.jwt.verify((isStudent ? student_token : token) ?? '')) as UserData;
-    if ((decoded.iat ?? 0) < Date.now() / 1000 - JWTTOKENTIME) {
-      console.log('Token expired');
-      request.user = {};
-      response.clearCookie(isStudent ? 'student_token' : 'token');
-    } else {
-      decoded.token = token ?? '';
-      request.user = decoded;
+  } else {
+    try {
+      const isStudent = request.url.toLowerCase().indexOf('/student') !== -1;
+      const token = (isStudent ? student_token : docent_token) ?? '';
+      const decoded = (await fastify.jwt.verify(token)) as UserData;
+      if ((decoded.iat ?? 0) < Date.now() / 1000 - JWTTOKENTIME) {
+        console.log('Token expired');
+        request.user = {};
+        response.clearCookie(isStudent ? 'student_token' : 'token');
+      } else {
+        decoded.token = token;
+        request.user = decoded;
+      }
+    } catch (err) {
+      // do nothing
     }
-  } catch (err) {
-    // do nothing
   }
 });
 

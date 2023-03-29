@@ -7,7 +7,7 @@ async function authRoutes(fastify: AppServer) {
 
   fastify.post('/auth', async (request, reply) => {
     const user = request.user as UserData;
-    if ('type' in user && user.type !== 1) {
+    if ('type' in user && user.type === 0) {
       const resp: AuthRepsonse = { decoded: user, authenticated: true };
       reply.send(resp);
       return;

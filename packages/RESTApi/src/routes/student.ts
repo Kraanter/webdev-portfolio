@@ -1,9 +1,19 @@
-import { AppServer, StudentLoginRequest } from '../../types';
+import { AppServer, AuthRepsonse, StudentLoginRequest, UserData } from 'types';
 import { createSession, registerStudent, removeSession } from '../database';
 
 export async function studentRoutes(fastify: AppServer) {
   const client = fastify.pg;
   client.connect();
+
+  fastify.post('/student/auth', async (request, reply) => {
+    const user = request.user as UserData;
+    if (user && 'type' in user && user.type === 1) {
+      const resp: AuthRepsonse = { decoded: user, authenticated: true };
+      reply.send(resp);
+      return;
+    }
+    reply.send({ authenticated: false, message: 'Invalid token' });
+  });
 
   fastify.post('/student/login', async (request, reply) => {
     try {
@@ -11,11 +21,11 @@ export async function studentRoutes(fastify: AppServer) {
 
       const data = await registerStudent(body, client);
 
-      console.log('data', data);
-
-      const token = fastify.jwt.sign(data);
-
-      // const session = await createSession({ token, student_id: data.id }, client);
+      const token = fastify.jwt.sign({
+        ...data,
+        type: 1,
+        token: '',
+      } as UserData);
 
       // create a cookie with studen token
       reply.setCookie('student_token', token, {
@@ -24,7 +34,15 @@ export async function studentRoutes(fastify: AppServer) {
         maxAge: 60 * 60 * 24 * 1,
       });
 
-      reply.send({ token });
+      const response = {
+        authenticated: true,
+        decoded: {
+          ...data,
+          type: 1,
+          token,
+        },
+      } as AuthRepsonse;
+      reply.send(response);
     } catch (err) {
       console.log(err);
       reply.status(500).send({ message: 'Internal Server Error' });
@@ -32,15 +50,17 @@ export async function studentRoutes(fastify: AppServer) {
   });
 
   fastify.post('/student/session', async (request, reply) => {
+    const token = request.cookies['student_token'];
+    if (!token) {
+      reply.status(401).send({ message: 'Unauthorized' });
+      return;
+    }
     try {
-      // get token from cookie
-      const token = request.cookies['student_token'] ?? '';
-
       // Get student from token
-      const session = (await fastify.jwt.verify(token)) as { id: string };
+      const { id } = request.user as UserData;
 
       // Create a new session
-      const newSession = await createSession({ token, student_id: session.id }, client);
+      const newSession = await createSession({ token, student_id: id }, client);
 
       if (newSession.token !== token) {
         reply.setCookie('student_token', newSession.token, {

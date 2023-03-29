@@ -1,15 +1,11 @@
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { fetchStudent } from '../../../logic/login';
-import { useStorage } from '../../../util/storage';
 
 const Login: React.FC = () => {
   const [error, setError] = React.useState('');
   const [formData, setFormData] = React.useState({ username: '', code: '' });
-  const [getSession] = useStorage('session', '', 'session');
   const navigate = useNavigate();
-
-  if (getSession() !== '') return <Navigate replace to="/student" />;
 
   React.useEffect(() => {
     if (error === '') return;

@@ -22,13 +22,14 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ nonAuthenticated = false, docen
     const { data, isLoading, error } = useSWR('/api/auth', fetcher('POST'));
     const isAuthenticated = !!data?.authenticated;
     const user = data?.decoded as UserData;
+    console.log(isAuthenticated, nonAuthenticated, data);
     if (user) setUser(user);
     if (error) return <div>Error</div>;
     if (isLoading) return <div></div>;
-    if (isAuthenticated === nonAuthenticated) return <Navigate to={nonAuthenticated ? '/login' : '/docent'} />;
+    if (isAuthenticated === nonAuthenticated) return <Navigate to={nonAuthenticated ? '/docent' : '/login'} />;
   }
 
-  const Wrapper = docent ? DocentLayout : EmptyWrapper;
+  const Wrapper = nonAuthenticated ? EmptyWrapper : DocentLayout;
   return (
     <Wrapper>
       <Outlet />
