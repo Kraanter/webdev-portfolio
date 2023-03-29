@@ -1,22 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { connect, Socket } from 'socket.io-client';
-
-type Props = {
-  socket: Socket;
-};
-
-function createSocket() {
-  const socket = connect('/', {
-    path: '/browser-streamer',
-    withCredentials: true,
-    autoConnect: false,
-  });
-  return socket;
-}
+import { socket } from '../../../util/websocket';
 
 const Stream: React.FC = () => {
-  const socket = useRef(createSocket()).current;
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -34,7 +20,7 @@ const Stream: React.FC = () => {
     <>
       {!isConnected && <div className="loading">Loading...</div>}
 
-      {isConnected && <ImageStream socket={socket} />}
+      {isConnected && <ImageStream />}
     </>
     //     </div>
     //   </div>
@@ -42,7 +28,7 @@ const Stream: React.FC = () => {
   );
 };
 
-const ImageStream = ({ socket }: Props) => {
+const ImageStream = () => {
   const ref = useRef<HTMLDivElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const [cursor, setCursor] = useState('default');
