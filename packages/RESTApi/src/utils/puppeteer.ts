@@ -20,8 +20,9 @@ export async function puppeteerSocketServer(fastify: AppServer) {
     if (timeout) clearTimeout(timeout);
 
     const rawCookie = parse(client.request.headers.cookie ?? '');
-    const cookie = rawCookie['student_token'];
-    const { id: userId, username } = (await fastify.jwt.verify((cookie as string) ?? '')) as UserData;
+    const cookie = rawCookie['student_token'] as string | undefined;
+    if (!cookie) return;
+    const { id: userId, username } = (await fastify.jwt.verify(cookie as string)) as UserData;
 
     if (!userId) {
       console.log('❌: User is not logged in!');

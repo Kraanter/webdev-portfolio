@@ -27,10 +27,17 @@ type AuthRepsonse =
       message: string;
     };
 
+export enum UserType {
+  Docent = 0,
+  Student = 1,
+}
+
 export interface UserData {
   id: string;
   token: string;
   username: string;
+  type: UserType;
+  iat?: number;
 }
 
 export interface GroupData {

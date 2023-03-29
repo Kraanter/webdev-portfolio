@@ -6,8 +6,8 @@ async function authRoutes(fastify: AppServer) {
   client.connect();
 
   fastify.post('/auth', async (request, reply) => {
-    if (request.user) {
-      const user = request.user as UserData;
+    const user = request.user as UserData;
+    if ('type' in user && user.type !== 1) {
       const resp: AuthRepsonse = { decoded: user, authenticated: true };
       reply.send(resp);
       return;
@@ -34,6 +34,7 @@ async function authRoutes(fastify: AppServer) {
         id: rows[0].id,
         username: rows[0].username,
         token: '',
+        type: 0,
       };
       const token = fastify.jwt.sign(user);
 
@@ -44,7 +45,7 @@ async function authRoutes(fastify: AppServer) {
         secure: true,
         path: '/',
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        maxAge: 1000 * 60 * 60 * 2, // 2 hours in milliseconds
       });
 
       reply.send(replyData);
@@ -72,6 +73,7 @@ async function authRoutes(fastify: AppServer) {
         id: rows[0].id,
         username: rows[0].username,
         token: token,
+        type: 0,
       };
       const replyData: LoginResponse = { token, user };
 

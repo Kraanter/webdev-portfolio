@@ -9,11 +9,11 @@ import EmptyWrapper from './wrappers/EmptyLayout';
 
 interface RouteGuardProps {
   docent?: boolean;
-  authenticated?: boolean;
+  nonAuthenticated?: boolean;
   logout?: boolean;
 }
 
-const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent = false, logout = false }) => {
+const RouteGuard: React.FC<RouteGuardProps> = ({ nonAuthenticated = false, docent = false, logout = false }) => {
   const [, setUser, removeUser] = useStorage<undefined | UserData>('user', undefined, 'session');
 
   if (logout) {
@@ -25,7 +25,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ authenticated = false, docent =
     if (user) setUser(user);
     if (error) return <div>Error</div>;
     if (isLoading) return <div></div>;
-    if (isAuthenticated !== authenticated) return <Navigate to={authenticated ? '/login' : '/docent'} />;
+    if (isAuthenticated === nonAuthenticated) return <Navigate to={nonAuthenticated ? '/login' : '/docent'} />;
   }
 
   const Wrapper = docent ? DocentLayout : EmptyWrapper;
