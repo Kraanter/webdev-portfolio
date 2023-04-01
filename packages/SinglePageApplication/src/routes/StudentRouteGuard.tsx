@@ -27,6 +27,7 @@ const StudentRouteGuard: React.FC<StudentRouteGuardProps> = ({ nonAuthenticated 
     if (isAuthenticated) setSession(responseData.decoded.token);
     if (error) return <div>Error</div>;
     if (isLoading) return <div></div>;
+    console.log(isAuthenticated, nonAuthenticated);
     if (isAuthenticated === nonAuthenticated) return <Navigate to={nonAuthenticated ? '/student' : '/student/login'} />;
   }
 

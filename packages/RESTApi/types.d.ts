@@ -32,24 +32,29 @@ export enum UserType {
   Student = 1,
 }
 
-export interface UserData {
+interface UserDataBase {
   id: string;
-  token: string;
   username: string;
   type: UserType;
+  token: string;
   iat?: number;
 }
+
+export interface DocentData extends UserDataBase {
+  type: UserType.Docent;
+}
+
+export interface StudentData extends UserDataBase {
+  type: UserType.Student;
+  group_code: string;
+}
+
+export type UserData = DocentData | StudentData;
 
 export interface GroupData {
   name: string;
   code: string;
   online: number;
-}
-
-export interface StudentData {
-  id: string;
-  username: string;
-  groupcode: string;
 }
 
 export interface LoginResponse {

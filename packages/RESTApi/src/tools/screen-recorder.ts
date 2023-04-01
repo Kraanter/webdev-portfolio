@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CDPSession, Page } from 'puppeteer';
-import { Server } from 'socket.io';
+import { Socket } from 'socket.io';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const emptyFunction = async () => {};
 
 class PuppeteerScreenRecorder {
-  socket: Server;
+  socket: Socket;
   page: Page;
   client: CDPSession | undefined;
   userId: string;
 
-  constructor(userId: string, page: Page, socket: Server) {
+  constructor(userId: string, page: Page, socket: Socket) {
     this.userId = userId;
     this.page = page;
     this.socket = socket;
@@ -69,8 +69,8 @@ class PuppeteerScreenRecorder {
       );
     });
 
-    // return this.socket.to(this.userId).emit('image', { img: data, fullHeight });
-    return this.socket.to(this.userId).emit('image', { img: data, fullHeight });
+    this.socket.to(this.userId).emit('image', { img: data });
+    return this.socket.emit('image', { img: data, fullHeight });
   }
 
   async start(options = {}) {

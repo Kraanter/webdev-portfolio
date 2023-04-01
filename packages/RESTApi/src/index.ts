@@ -5,12 +5,11 @@ import Fastify from 'fastify';
 import fastifySocketIO from 'fastify-socket.io';
 import { ServerOptions } from 'socket.io';
 import { UserData } from '../types';
-import addJWT from './plugins/jwt-token';
+import { addJWT } from './plugins/jwt-token';
 import authRoutes from './routes/auth';
 import { groupRoutes } from './routes/group';
-import { socketRoutes } from './routes/socket';
+import { socketRoutes } from './routes/socket/socket';
 import { studentRoutes } from './routes/student';
-import { puppeteerSocketServer } from './utils/puppeteer';
 config();
 
 const fastify = Fastify({
@@ -72,8 +71,6 @@ fastify.register(groupRoutes);
 
 fastify.register(studentRoutes);
 
-fastify.register(socketRoutes);
-
 const JWTTOKENTIME = 60 * 60 * 2;
 
 fastify.addHook('preHandler', async (request, response) => {
@@ -91,18 +88,32 @@ fastify.addHook('preHandler', async (request, response) => {
         console.log('Token expired');
         request.user = {};
         response.clearCookie(isStudent ? 'student_token' : 'token');
+        return;
       } else {
-        decoded.token = token;
-        request.user = decoded;
+        // check if user is still in database
+        // const table = isStudent ? 'students' : 'users';
+        const query = isStudent ? 'SELECT * FROM students WHERE id = $1' : 'SELECT * FROM users WHERE id = $1';
+        const { rows } = await fastify.pg.query(query, [decoded.id]);
+        if (rows.length === 0) {
+          request.user = {};
+          response.clearCookie(isStudent ? 'student_token' : 'token');
+          return;
+        } else {
+          decoded.token = token;
+          request.user = decoded;
+        }
       }
     } catch (err) {
       // do nothing
+      console.log('err', err);
+      response.clearCookie('token');
+      request.user = {};
     }
   }
 });
 
 fastify.ready().then(() => {
-  puppeteerSocketServer(fastify);
+  socketRoutes(fastify);
 });
 
 const PORT = parseInt(process.env.PORT ?? '3000');
