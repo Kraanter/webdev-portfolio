@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { PostgresDb } from '@fastify/postgres';
+import { nanoid } from 'nanoid';
 import puppeteer, { KeyInput, Viewport } from 'puppeteer';
 import { Socket } from 'socket.io';
 import { StudentData } from '../../types';
@@ -22,8 +23,7 @@ export async function puppeteerSocketServer(
     // If the client reconnects, clear the timeout
     if (timeout) clearTimeout(timeout);
 
-    // const roomId = nanoid(10);
-    const roomId = 'cvoWoKTPFK';
+    const roomId = nanoid(10);
 
     // Create a new browser instance
     const browser = await puppeteer.launch({
@@ -39,7 +39,7 @@ export async function puppeteerSocketServer(
     console.log(`📝: Room ${roomId} is for user ${userId} ${username} just connected!`);
     console.log(client.rooms);
     client.emit('stream', 'connected');
-    client.to(group_code).emit('change', 'connected');
+    client.to(group_code).emit('change', group_code);
 
     client.on('disconnect', async () => {
       // If the client disconnects, close the browser but wait 2.5 seconds first to see if the client reconnects
@@ -48,17 +48,21 @@ export async function puppeteerSocketServer(
     });
 
     const disconnect = async () => {
-      console.log(`⚡: Room ${roomId} is disconnected!`);
-      client.disconnect();
       await removeSession(roomId, pgClient);
-      client.to(group_code).emit('change', 'disconnected');
+      client.disconnect();
+      console.log(`⚡: Room ${roomId} is disconnected!`);
+      client.to(group_code).emit('change', group_code);
     };
 
     client.on('view', async ({ viewport, url }: { viewport: Viewport; url: string }) => {
       const context = await browser.createIncognitoBrowserContext();
       const page = await context.newPage();
-      await page.setViewport(viewport);
-      await page.goto(url);
+      try {
+        await page.setViewport(viewport);
+        await page.goto(url);
+      } catch (err) {
+        console.log(err);
+      }
 
       const screenshots = new PuppeteerScreenRecorder(roomId, page, client);
       await screenshots.init();

@@ -10,19 +10,18 @@ export async function socketRoutes(fastify: AppServer) {
   fastify.io.on('connection', async (client) => {
     const cookies = parse(client.request.headers.cookie ?? '');
 
-    if ('student_token' in cookies) {
+    if (!('x-role' in client.request.headers) && 'student_token' in cookies) {
       const token = cookies.student_token;
       const decoded = await isStudentToken(token, fastify);
+      console.log('👨🏻‍🎓: Student connected', decoded);
       if (decoded === false) {
         client.disconnect();
         return;
       }
-      console.log('👨🏻‍🎓: Student connected', decoded.username, 'to group', decoded);
+      console.log('👨🏻‍🎓: Student connected', decoded.username, 'to group', decoded.group_code);
       client.emit('connected', 'connected');
       puppeteerSocketServer(client, pgClient, decoded);
-      return;
-    }
-    if ('token' in cookies) {
+    } else if ('token' in cookies) {
       const token = cookies.token;
       const decoded = await isDocentToken(token, fastify);
       if (decoded === false) {
@@ -30,6 +29,7 @@ export async function socketRoutes(fastify: AppServer) {
         return;
       }
       console.log('👨🏻‍🏫: Docent connected', decoded.username);
+      client.emit('connected', 'connected');
 
       client.on('join', async ({ token }) => {
         if (!token) {
@@ -39,9 +39,6 @@ export async function socketRoutes(fastify: AppServer) {
         client.join(token);
         console.log('👨🏻‍🏫: Docent joined room', token);
       });
-      return;
     }
-    client.disconnect();
-    return;
   });
 }

@@ -69,7 +69,7 @@ class PuppeteerScreenRecorder {
       );
     });
 
-    this.socket.to(this.userId).emit('image', { img: data });
+    this.socket.to(this.userId).emit('image_view', { img: data });
     return this.socket.emit('image', { img: data, fullHeight });
   }
 

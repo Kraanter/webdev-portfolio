@@ -43,12 +43,6 @@ function socketOptions(): Partial<ServerOptions> {
     credentials: true,
   };
 
-  opts.cookie = {
-    name: 'student_token',
-    domain: '/',
-    httpOnly: true,
-  };
-
   return opts;
 }
 
@@ -83,6 +77,10 @@ fastify.addHook('preHandler', async (request, response) => {
     try {
       const isStudent = request.url.toLowerCase().indexOf('/student') !== -1;
       const token = (isStudent ? student_token : docent_token) ?? '';
+      if (!token) {
+        request.user = {};
+        return;
+      }
       const decoded = (await fastify.jwt.verify(token)) as UserData;
       if ((decoded.iat ?? 0) < Date.now() / 1000 - JWTTOKENTIME) {
         console.log('Token expired');

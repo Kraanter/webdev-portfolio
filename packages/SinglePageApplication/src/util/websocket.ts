@@ -8,3 +8,12 @@ export const socket = io(URL, {
   autoConnect: false,
   withCredentials: true,
 });
+
+export const docentSocket = io(URL, {
+  path: PATH,
+  autoConnect: false,
+  withCredentials: true,
+  extraHeaders: {
+    'x-role': 'docent',
+  },
+});

@@ -65,8 +65,6 @@ const ImageStream = () => {
     document.addEventListener('keydown', keydown);
     document.addEventListener('paste', paste);
 
-    console.log('view');
-
     socket.emit('view', {
       url: 'https://www.youtube.com/',
       viewport: {
@@ -76,7 +74,6 @@ const ImageStream = () => {
     });
 
     socket.on('image', ({ img, fullHeight }) => {
-      console.log('image');
       setImage('data:image/jpeg;base64,' + img);
       setIsLoading(false);
       setFullHeight(fullHeight);

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS sessions (
     id SERIAL PRIMARY KEY,
     student_id SERIAL NOT NULL REFERENCES students(id) ON DELETE CASCADE,
-    token text NOT NULL,
+    token text NOT NULL UNIQUE,
     last_updated TIMESTAMP NOT NULL DEFAULT NOW()
     -- Update last_updated when token is updated
     CONSTRAINT sessions_token_check CHECK (last_updated = NOW())

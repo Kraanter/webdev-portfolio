@@ -9,6 +9,7 @@ export async function studentRoutes(fastify: AppServer) {
     const user = request.user as UserData;
     if (user && 'type' in user && user.type === 1) {
       const resp: AuthRepsonse = { decoded: user, authenticated: true };
+      console.log(resp);
       reply.send(resp);
       return;
     }
