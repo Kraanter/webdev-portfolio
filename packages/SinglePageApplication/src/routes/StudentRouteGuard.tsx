@@ -9,27 +9,19 @@ import StudentWrapper from './wrappers/StudentWrapper';
 
 interface StudentRouteGuardProps {
   nonAuthenticated?: boolean;
-  logout?: boolean;
 }
 
-const StudentRouteGuard: React.FC<StudentRouteGuardProps> = ({ nonAuthenticated = false, logout = false }) => {
-  const [, setSession, removeSession] = useStorage('session_token', '', 'session');
+const StudentRouteGuard: React.FC<StudentRouteGuardProps> = ({ nonAuthenticated = false }) => {
+  const [, setSession] = useStorage('session_token', '', 'session');
 
-  if (logout) {
-    removeSession();
-  } else {
-    const { data, isLoading, error } = useSWR('/api/student/auth', fetcher('POST'));
-    const responseData = data as AuthRepsonse;
-    const isAuthenticated = !!responseData?.authenticated;
+  const { data, isLoading, error } = useSWR('/api/student/auth', fetcher('POST'));
+  const responseData = data as AuthRepsonse;
+  const isAuthenticated = !!responseData?.authenticated;
 
-    console.log(isAuthenticated, nonAuthenticated, responseData);
-
-    if (isAuthenticated) setSession(responseData.decoded.token);
-    if (error) return <div>Error</div>;
-    if (isLoading) return <div></div>;
-    console.log(isAuthenticated, nonAuthenticated);
-    if (isAuthenticated === nonAuthenticated) return <Navigate to={nonAuthenticated ? '/student' : '/student/login'} />;
-  }
+  if (isAuthenticated) setSession(responseData.decoded.token);
+  if (error) return <div>Error</div>;
+  if (isLoading) return <div></div>;
+  if (isAuthenticated === nonAuthenticated) return <Navigate to={nonAuthenticated ? '/student' : '/student/login'} />;
 
   const Wrapper = nonAuthenticated ? EmptyWrapper : StudentWrapper;
 

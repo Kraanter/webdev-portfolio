@@ -13,7 +13,7 @@ export interface StudentLoginRequest {
 }
 
 export interface SessionData {
-  student_id: string;
+  student_id: string | number;
   token: string;
 }
 
@@ -33,7 +33,7 @@ export enum UserType {
 }
 
 interface UserDataBase {
-  id: string;
+  id: string | number;
   username: string;
   type: UserType;
   token: string;

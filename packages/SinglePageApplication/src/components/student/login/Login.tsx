@@ -1,13 +1,13 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { fetchStudent } from '../../../logic/login';
+import { socket } from '../../../util/websocket';
 
 const Login: React.FC = () => {
   const [error, setError] = React.useState('');
   const [formData, setFormData] = React.useState({ username: '', code: '' });
-  const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (socket.connected) socket.disconnect();
     if (error === '') return;
     const timeout = setTimeout(() => {
       setError('');
@@ -31,19 +31,20 @@ const Login: React.FC = () => {
       return;
     }
     const response = await fetchStudent(formData);
-    if (!response) {
-      setError('De ingevoerde code bestaat niet');
+    if (typeof response === 'string') {
+      setError(response);
       return;
     }
     setError('');
-    navigate('/student');
+    // reload page to get new data
+    document.location.reload();
   };
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-yellow-100">
       <div className="w-full md:w-2/3 xl:w-1/3 rounded-lg">
         <div className="flex font-bold justify-center mt-6">
-          <h1 className="mb-12 font-bold text-8xl">Student Login</h1>
+          <h1 className="mb-12 font-bold text-6xl">Student Login</h1>
         </div>
         <form onSubmit={onSubmit} className="px-12 pb-10">
           <input

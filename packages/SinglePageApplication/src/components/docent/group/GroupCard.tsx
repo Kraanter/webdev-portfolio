@@ -9,8 +9,6 @@ const GroupCard: React.FC<GroupData & { socket: Socket }> = ({ code, name, onlin
   useEffect(() => {
     socket.emit('join', { token: code });
     socket.on('change', (data: string) => {
-      console.log('change');
-      console.log(data);
       if (data === code) getNumOnline();
     });
     getNumOnline();

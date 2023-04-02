@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="" element={<Login />} />
       </Route>
       <Route path="/register" element={<Login register />} />
-      <Route path="/docent" element={<RouteGuard docent />}>
+      <Route path="/docent" element={<RouteGuard />}>
         <Route path="" element={<Docent />} />
       </Route>
       <Route path="/student/login" element={<StudentRouteGuard nonAuthenticated />}>

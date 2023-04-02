@@ -19,7 +19,6 @@ export async function puppeteerSocketServer(
 ) {
   let timeout: NodeJS.Timeout | null = null;
   client.on('stream_connect', async () => {
-    console.log('📝: Client connected to stream_connect');
     // If the client reconnects, clear the timeout
     if (timeout) clearTimeout(timeout);
 
@@ -36,8 +35,6 @@ export async function puppeteerSocketServer(
     if (client.rooms.has(roomId)) return;
     await client.join(roomId);
 
-    console.log(`📝: Room ${roomId} is for user ${userId} ${username} just connected!`);
-    console.log(client.rooms);
     client.emit('stream', 'connected');
     client.to(group_code).emit('change', group_code);
 
@@ -50,7 +47,6 @@ export async function puppeteerSocketServer(
     const disconnect = async () => {
       await removeSession(roomId, pgClient);
       client.disconnect();
-      console.log(`⚡: Room ${roomId} is disconnected!`);
       client.to(group_code).emit('change', group_code);
     };
 
@@ -62,6 +58,7 @@ export async function puppeteerSocketServer(
         await page.goto(url);
       } catch (err) {
         console.log(err);
+        return;
       }
 
       const screenshots = new PuppeteerScreenRecorder(roomId, page, client);

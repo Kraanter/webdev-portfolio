@@ -106,7 +106,12 @@ export async function getSession(token: string, client: DatabaseClient) {
 }
 
 export async function removeSession(token: string, client: DatabaseClient) {
-  console.log('Removing session', token);
-  const { rows } = await client.query('DELETE FROM sessions WHERE token = $1', [token]);
-  return rows[0];
+  const resp = await client.query('DELETE FROM sessions WHERE token = $1 RETURNING *', [token]);
+  const { rows } = resp;
+  if (rows.length === 0) return null;
+  const { rows: studentRows } = await client.query('DELETE FROM students WHERE id = $1 RETURNING *', [
+    rows[0].student_id,
+  ]);
+
+  return { session: rows[0], student: studentRows[0] };
 }

@@ -67,7 +67,7 @@ fastify.register(studentRoutes);
 
 const JWTTOKENTIME = 60 * 60 * 2;
 
-fastify.addHook('preHandler', async (request, response) => {
+fastify.addHook('onRequest', async (request, response) => {
   // add user data to request
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { token: docent_token, student_token } = request.cookies;
@@ -77,27 +77,13 @@ fastify.addHook('preHandler', async (request, response) => {
     try {
       const isStudent = request.url.toLowerCase().indexOf('/student') !== -1;
       const token = (isStudent ? student_token : docent_token) ?? '';
-      if (!token) {
-        request.user = {};
-        return;
-      }
-      const decoded = (await fastify.jwt.verify(token)) as UserData;
-      if ((decoded.iat ?? 0) < Date.now() / 1000 - JWTTOKENTIME) {
-        console.log('Token expired');
-        request.user = {};
-        response.clearCookie(isStudent ? 'student_token' : 'token');
-        return;
-      } else {
-        // check if user is still in database
-        // const table = isStudent ? 'students' : 'users';
-        const query = isStudent ? 'SELECT * FROM students WHERE id = $1' : 'SELECT * FROM users WHERE id = $1';
-        const { rows } = await fastify.pg.query(query, [decoded.id]);
-        if (rows.length === 0) {
+      if (token) {
+        const decoded = (await fastify.jwt.verify(token)) as UserData;
+        if ((decoded.iat ?? 0) < Date.now() / 1000 - JWTTOKENTIME) {
+          console.log('Token expired');
           request.user = {};
           response.clearCookie(isStudent ? 'student_token' : 'token');
-          return;
         } else {
-          decoded.token = token;
           request.user = decoded;
         }
       }

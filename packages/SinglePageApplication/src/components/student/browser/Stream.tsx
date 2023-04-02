@@ -45,7 +45,6 @@ const ImageStream = () => {
     if ((event.ctrlKey || event.metaKey) && ['v', 'c'].includes(event.key)) {
       return;
     }
-    console.log(event);
     socket.emit('keydown', {
       key: event.key,
     });

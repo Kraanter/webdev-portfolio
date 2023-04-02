@@ -13,12 +13,10 @@ export async function socketRoutes(fastify: AppServer) {
     if (!('x-role' in client.request.headers) && 'student_token' in cookies) {
       const token = cookies.student_token;
       const decoded = await isStudentToken(token, fastify);
-      console.log('👨🏻‍🎓: Student connected', decoded);
       if (decoded === false) {
         client.disconnect();
         return;
       }
-      console.log('👨🏻‍🎓: Student connected', decoded.username, 'to group', decoded.group_code);
       client.emit('connected', 'connected');
       puppeteerSocketServer(client, pgClient, decoded);
     } else if ('token' in cookies) {
@@ -28,7 +26,6 @@ export async function socketRoutes(fastify: AppServer) {
         client.disconnect();
         return;
       }
-      console.log('👨🏻‍🏫: Docent connected', decoded.username);
       client.emit('connected', 'connected');
 
       client.on('join', async ({ token }) => {
@@ -37,7 +34,6 @@ export async function socketRoutes(fastify: AppServer) {
         }
 
         client.join(token);
-        console.log('👨🏻‍🏫: Docent joined room', token);
       });
     }
   });

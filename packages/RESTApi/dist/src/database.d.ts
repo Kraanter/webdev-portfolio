@@ -30,15 +30,8 @@ export declare function checkGroupCode(code: string, client: DatabaseClient): bo
  * }
  * });
  **/
-export declare function createGroup(
-  { name, code }: GroupData,
-  userId: number | string,
-  client: DatabaseClient
-): Promise<any>;
-export declare function registerStudent(
-  { name, code }: StudentLoginRequest,
-  client: DatabaseClient
-): Promise<StudentData>;
+export declare function createGroup({ name, code }: GroupData, userId: number | string, client: DatabaseClient): Promise<any>;
+export declare function registerStudent({ username, code }: StudentLoginRequest, client: DatabaseClient): Promise<StudentData>;
 export declare function createSession({ student_id, token }: SessionData, client: DatabaseClient): Promise<SessionData>;
 export declare function getSession(token: string, client: DatabaseClient): Promise<SessionData | null>;
 export declare function removeSession(token: string, client: DatabaseClient): Promise<any>;
