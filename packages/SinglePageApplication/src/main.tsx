@@ -15,18 +15,20 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <React.StrictMode>
   <BrowserRouter>
     <Routes>
-      <Route path="/logout" element={<RouteGuard logout />}>
+      <Route path="/logout" element={<RouteGuard nonAuthenticated logout />}>
         <Route index element={<Login logout />} />
       </Route>
       <Route index element={<Navigate replace to="/docent" />} />
-      <Route path="/login" element={<RouteGuard />}>
+      <Route path="/login" element={<RouteGuard nonAuthenticated />}>
         <Route path="" element={<Login />} />
       </Route>
       <Route path="/register" element={<Login register />} />
-      <Route path="/docent" element={<RouteGuard authenticated docent />}>
+      <Route path="/docent" element={<RouteGuard />}>
         <Route path="" element={<Docent />} />
       </Route>
-      <Route path="/student/login" element={<StudentLogin />} />
+      <Route path="/student/login" element={<StudentRouteGuard nonAuthenticated />}>
+        <Route path="" element={<StudentLogin />} />
+      </Route>
       <Route path="/student" element={<StudentRouteGuard />}>
         <Route path="" element={<Student />} />
       </Route>

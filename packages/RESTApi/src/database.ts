@@ -66,13 +66,12 @@ export async function registerStudent({ username, code }: StudentLoginRequest, c
   const { rows } = await client.query('SELECT code FROM groups WHERE code = $1', [code]);
   if (rows.length === 0) throw new Error('Group does not exist');
 
-  // If student already exists, return student
   const { rows: studentRows } = await client.query('SELECT * FROM students WHERE username = $1 AND group_code = $2', [
     username,
     rows[0].code,
   ]);
   if (studentRows.length > 0) {
-    return studentRows[0] as StudentData;
+    throw new Error('Student already exists');
   }
 
   // Insert student into database if it doesn't exist
@@ -107,6 +106,12 @@ export async function getSession(token: string, client: DatabaseClient) {
 }
 
 export async function removeSession(token: string, client: DatabaseClient) {
-  const { rows } = await client.query('DELETE FROM sessions WHERE token = $1', [token]);
-  return rows[0];
+  const resp = await client.query('DELETE FROM sessions WHERE token = $1 RETURNING *', [token]);
+  const { rows } = resp;
+  if (rows.length === 0) return null;
+  const { rows: studentRows } = await client.query('DELETE FROM students WHERE id = $1 RETURNING *', [
+    rows[0].student_id,
+  ]);
+
+  return { session: rows[0], student: studentRows[0] };
 }

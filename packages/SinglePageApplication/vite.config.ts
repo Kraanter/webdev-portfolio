@@ -1,7 +1,9 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, ServerOptions } from 'vite';
+import makeCert from 'vite-plugin-mkcert';
 
 const serverOptions: ServerOptions = {
+  https: true,
   proxy: {
     '/api': {
       target: 'http://localhost:3000',
@@ -22,7 +24,7 @@ const serverOptions: ServerOptions = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), makeCert()],
   logLevel: 'info',
   server: serverOptions,
   preview: serverOptions,

@@ -35,15 +35,18 @@ export async function fetchStudent(studentFormData: StudentLoginRequest) {
     body: JSON.stringify(studentFormData),
   });
 
-  const { token } = await response.json();
+  const { authenticated, decoded, message } = (await response.json()) as {
+    authenticated: boolean;
+    decoded: UserData;
+    message?: string;
+  };
 
-  if (token) {
-    console.log('reponse', token);
-    setSession(token);
-    return true;
+  if (!authenticated) {
+    removeUser();
+    return message ?? 'Internal Server Error';
   }
-  removeUser();
-  return false;
+  console.log('reponse', decoded);
+  return !!authenticated;
 }
 
 export async function logoutUser() {

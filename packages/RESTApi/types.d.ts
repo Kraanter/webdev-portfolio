@@ -13,7 +13,7 @@ export interface StudentLoginRequest {
 }
 
 export interface SessionData {
-  student_id: string;
+  student_id: string | number;
   token: string;
 }
 
@@ -27,22 +27,34 @@ type AuthRepsonse =
       message: string;
     };
 
-export interface UserData {
-  id: string;
-  token: string;
-  username: string;
+export enum UserType {
+  Docent = 0,
+  Student = 1,
 }
+
+interface UserDataBase {
+  id: string | number;
+  username: string;
+  type: UserType;
+  token: string;
+  iat?: number;
+}
+
+export interface DocentData extends UserDataBase {
+  type: UserType.Docent;
+}
+
+export interface StudentData extends UserDataBase {
+  type: UserType.Student;
+  group_code: string;
+}
+
+export type UserData = DocentData | StudentData;
 
 export interface GroupData {
   name: string;
   code: string;
   online: number;
-}
-
-export interface StudentData {
-  id: string;
-  username: string;
-  groupcode: string;
 }
 
 export interface LoginResponse {

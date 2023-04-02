@@ -5,12 +5,11 @@ import Fastify from 'fastify';
 import fastifySocketIO from 'fastify-socket.io';
 import { ServerOptions } from 'socket.io';
 import { UserData } from '../types';
-import addJWT from './plugins/jwt-token';
+import { addJWT } from './plugins/jwt-token';
 import authRoutes from './routes/auth';
 import { groupRoutes } from './routes/group';
-import { socketRoutes } from './routes/socket';
+import { socketRoutes } from './routes/socket/socket';
 import { studentRoutes } from './routes/student';
-import { puppeteerSocketServer } from './utils/puppeteer';
 config();
 
 const fastify = Fastify({
@@ -44,12 +43,6 @@ function socketOptions(): Partial<ServerOptions> {
     credentials: true,
   };
 
-  opts.cookie = {
-    name: 'student_token',
-    domain: '/',
-    httpOnly: true,
-  };
-
   return opts;
 }
 
@@ -72,24 +65,39 @@ fastify.register(groupRoutes);
 
 fastify.register(studentRoutes);
 
-fastify.register(socketRoutes);
+const JWTTOKENTIME = 60 * 60 * 2;
 
-fastify.addHook('preHandler', async (request) => {
+fastify.addHook('onRequest', async (request, response) => {
   // add user data to request
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { token, student_token } = request.cookies;
-  try {
-    const decoded = (await fastify.jwt.verify(student_token ?? token ?? '')) as UserData;
-    console.log('decoded', decoded);
-    decoded.token = token ?? '';
-    request.user = decoded;
-  } catch (err) {
-    // do nothing
+  const { token: docent_token, student_token } = request.cookies;
+  if (!docent_token && !student_token) {
+    request.user = {};
+  } else {
+    try {
+      const isStudent = request.url.toLowerCase().indexOf('/student') !== -1;
+      const token = (isStudent ? student_token : docent_token) ?? '';
+      if (token) {
+        const decoded = (await fastify.jwt.verify(token)) as UserData;
+        if ((decoded.iat ?? 0) < Date.now() / 1000 - JWTTOKENTIME) {
+          console.log('Token expired');
+          request.user = {};
+          response.clearCookie(isStudent ? 'student_token' : 'token');
+        } else {
+          request.user = decoded;
+        }
+      }
+    } catch (err) {
+      // do nothing
+      console.log('err', err);
+      response.clearCookie('token');
+      request.user = {};
+    }
   }
 });
 
 fastify.ready().then(() => {
-  puppeteerSocketServer(fastify);
+  socketRoutes(fastify);
 });
 
 const PORT = parseInt(process.env.PORT ?? '3000');
