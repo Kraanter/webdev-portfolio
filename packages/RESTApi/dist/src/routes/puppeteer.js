@@ -11,7 +11,6 @@ const screen_recorder_1 = __importDefault(require("../tools/screen-recorder"));
 async function puppeteerSocketServer(client, pgClient, { id: userId, username, group_code }) {
     let timeout = null;
     client.on('stream_connect', async () => {
-        console.log('📝: Client connected to stream_connect');
         // If the client reconnects, clear the timeout
         if (timeout)
             clearTimeout(timeout);
@@ -25,8 +24,6 @@ async function puppeteerSocketServer(client, pgClient, { id: userId, username, g
         if (client.rooms.has(roomId))
             return;
         await client.join(roomId);
-        console.log(`📝: Room ${roomId} is for user ${userId} ${username} just connected!`);
-        console.log(client.rooms);
         client.emit('stream', 'connected');
         client.to(group_code).emit('change', group_code);
         client.on('disconnect', async () => {
@@ -37,7 +34,6 @@ async function puppeteerSocketServer(client, pgClient, { id: userId, username, g
         const disconnect = async () => {
             await (0, database_1.removeSession)(roomId, pgClient);
             client.disconnect();
-            console.log(`⚡: Room ${roomId} is disconnected!`);
             client.to(group_code).emit('change', group_code);
         };
         client.on('view', async ({ viewport, url }) => {
@@ -49,6 +45,7 @@ async function puppeteerSocketServer(client, pgClient, { id: userId, username, g
             }
             catch (err) {
                 console.log(err);
+                return;
             }
             const screenshots = new screen_recorder_1.default(roomId, page, client);
             await screenshots.init();

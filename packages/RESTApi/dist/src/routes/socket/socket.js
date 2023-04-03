@@ -13,12 +13,10 @@ async function socketRoutes(fastify) {
         if (!('x-role' in client.request.headers) && 'student_token' in cookies) {
             const token = cookies.student_token;
             const decoded = await (0, jwt_token_1.isStudentToken)(token, fastify);
-            console.log('👨🏻‍🎓: Student connected', decoded);
             if (decoded === false) {
                 client.disconnect();
                 return;
             }
-            console.log('👨🏻‍🎓: Student connected', decoded.username, 'to group', decoded.group_code);
             client.emit('connected', 'connected');
             (0, puppeteer_1.puppeteerSocketServer)(client, pgClient, decoded);
         }
@@ -29,14 +27,12 @@ async function socketRoutes(fastify) {
                 client.disconnect();
                 return;
             }
-            console.log('👨🏻‍🏫: Docent connected', decoded.username);
             client.emit('connected', 'connected');
             client.on('join', async ({ token }) => {
                 if (!token) {
                     return;
                 }
                 client.join(token);
-                console.log('👨🏻‍🏫: Docent joined room', token);
             });
         }
     });

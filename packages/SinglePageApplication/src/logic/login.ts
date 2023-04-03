@@ -26,7 +26,7 @@ export async function fetchUser(type: 'login' | 'register', formData: LoginReque
 }
 
 export async function fetchStudent(studentFormData: StudentLoginRequest) {
-  const [, setSession, removeUser] = useStorage<UserData | undefined>('session', undefined, 'session');
+  const [, , removeUser] = useStorage<UserData | undefined>('session', undefined, 'session');
   const response = await fetch(API_ENDPOINT + '/student/login', {
     method: 'POST',
     headers: {

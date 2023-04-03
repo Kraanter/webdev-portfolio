@@ -1,15 +1,14 @@
 import { io } from 'socket.io-client';
 
-const URL = '/';
-const PATH = '/browser-streamer';
+const PATH = '/browser-streamer/';
 
-export const socket = io(URL, {
+export const socket = io('/', {
   path: PATH,
   autoConnect: false,
   withCredentials: true,
 });
 
-export const docentSocket = io(URL, {
+export const docentSocket = io('/', {
   path: PATH,
   autoConnect: false,
   withCredentials: true,

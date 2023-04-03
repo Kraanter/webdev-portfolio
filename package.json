@@ -16,8 +16,8 @@
     "start:client": "yarn workspace @showcase/singlepageapplication start",
     "start:server": "yarn workspace @showcase/restapi start",
     "prepare": "husky install",
-    "docker": "docker-compose up -d",
-    "docker:clean": "docker-compose down -v",
+    "docker": "docker compose up -d",
+    "docker:clean": "docker compose down -v",
     "docker:reset": "yarn docker:clean && yarn docker",
     "docker:stop": "docker-compose stop"
   },

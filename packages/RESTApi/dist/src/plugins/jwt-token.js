@@ -21,28 +21,29 @@ async function addJWT(fastify) {
 }
 exports.addJWT = addJWT;
 async function isTokenOfType(token, fastify, type) {
-    const pgClient = fastify.pg;
-    pgClient.connect();
     const decoded = (await fastify.jwt.verify(token));
-    const query = (function () {
-        switch (type) {
-            case 0:
-                return 'SELECT * FROM users WHERE id = $1';
-            case 1:
-                return 'SELECT * FROM students WHERE id = $1';
-            default:
-                throw new Error('Invalid type');
-        }
-    })();
-    const { rows } = await pgClient.query(query, [decoded.id]);
-    if (rows.length === 0 || decoded.type !== type) {
+    // const query = (function () {
+    //   switch (type) {
+    //     case 0:
+    //       return 'SELECT * FROM users WHERE id = $1';
+    //     case 1:
+    //       return 'SELECT * FROM students WHERE id = $1';
+    //     default:
+    //       throw new Error('Invalid type');
+    //   }
+    // })();
+    // const pgClient = fastify.pg;
+    // pgClient.connect();
+    // const { rows } = await pgClient.query(query, [decoded.id]);
+    // console.log(rows);
+    // if (rows.length === 0 || decoded.type !== type) {
+    if (decoded.type !== type) {
         return false;
     }
     return decoded;
 }
 async function isStudentToken(token, fastify) {
     const decoded = await isTokenOfType(token, fastify, 1);
-    console.log(decoded);
     if (decoded === false || decoded.type !== 1) {
         return false;
     }

@@ -42,7 +42,6 @@ async function authRoutes(fastify: AppServer) {
 
       // add token to cookie
       reply.setCookie('token', token, {
-        secure: true,
         path: '/',
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 2, // 2 hours in milliseconds
@@ -79,7 +78,6 @@ async function authRoutes(fastify: AppServer) {
 
       // add token to cookie
       reply.setCookie('token', token, {
-        secure: true,
         path: '/',
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days

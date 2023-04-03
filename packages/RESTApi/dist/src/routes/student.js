@@ -9,13 +9,18 @@ async function studentRoutes(fastify) {
         const user = request.user;
         if (user && 'type' in user && user.type === 1) {
             const resp = { decoded: user, authenticated: true };
-            console.log(resp);
             reply.send(resp);
             return;
         }
+        reply.clearCookie('student_token');
         reply.send({ authenticated: false, message: 'Invalid token' });
     });
+    fastify.get('/student/logout', async (request, reply) => {
+        reply.clearCookie('student_token');
+        reply.send();
+    });
     fastify.post('/student/login', async (request, reply) => {
+        var _a;
         try {
             const body = request.body;
             const data = await (0, database_1.registerStudent)(body, client);
@@ -41,8 +46,8 @@ async function studentRoutes(fastify) {
             reply.send(response);
         }
         catch (err) {
-            console.log(err);
-            reply.status(500).send({ message: 'Internal Server Error' });
+            const message = (_a = err.message) !== null && _a !== void 0 ? _a : 'Internal Server Error';
+            reply.status(500).send({ message });
         }
     });
     fastify.post('/student/session', async (request, reply) => {
@@ -64,17 +69,6 @@ async function studentRoutes(fastify) {
                 });
             }
             reply.send(newSession);
-        }
-        catch (err) {
-            console.log(err);
-            reply.status(500).send({ message: 'Internal Server Error' });
-        }
-    });
-    fastify.delete('/student/session', async (request, reply) => {
-        try {
-            const { token } = request.body;
-            const session = await (0, database_1.removeSession)(token, client);
-            reply.send(session);
         }
         catch (err) {
             console.log(err);

@@ -1,12 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface StudentWrapperProps {
   children: React.ReactNode;
 }
 
 const StudentWrapper: React.FC<StudentWrapperProps> = ({ children }) => {
-  const navigate = useNavigate();
   return (
     <>
       <header className="text-gray-600 body-font">

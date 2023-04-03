@@ -1,9 +1,9 @@
 /* eslint-disable indent */
 import jwt from '@fastify/jwt';
-import { FastifyInstance } from 'fastify';
+// import { FastifyInstance } from 'fastify';
 import { AppServer, UserData } from '../../types';
 
-export async function addJWT(fastify: FastifyInstance) {
+export async function addJWT(fastify: any) {
   fastify.register(jwt, {
     secret: process.env.SECRET_KEY,
   });

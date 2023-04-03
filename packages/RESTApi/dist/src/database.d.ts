@@ -34,6 +34,9 @@ export declare function createGroup({ name, code }: GroupData, userId: number | 
 export declare function registerStudent({ username, code }: StudentLoginRequest, client: DatabaseClient): Promise<StudentData>;
 export declare function createSession({ student_id, token }: SessionData, client: DatabaseClient): Promise<SessionData>;
 export declare function getSession(token: string, client: DatabaseClient): Promise<SessionData | null>;
-export declare function removeSession(token: string, client: DatabaseClient): Promise<any>;
+export declare function removeSession(token: string, client: DatabaseClient): Promise<{
+    session: any;
+    student: any;
+} | null>;
 export {};
 //# sourceMappingURL=database.d.ts.map

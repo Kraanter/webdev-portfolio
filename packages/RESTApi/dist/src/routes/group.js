@@ -9,7 +9,10 @@ async function groupRoutes(fastify) {
     fastify.get('/groups', async (request, reply) => {
         try {
             const { id } = request.user;
-            const { rows } = await client.query('SELECT * FROM groups WHERE creator_id = $1', [id]);
+            if (!id)
+                reply.send([]);
+            const query = id !== 1 ? 'SELECT * FROM groups WHERE creator_id = $1' : 'SELECT * FROM groups WHERE $1 = $1';
+            const { rows } = await client.query(query, [id]);
             reply.send(rows || []);
         }
         catch (err) {
@@ -19,7 +22,6 @@ async function groupRoutes(fastify) {
     fastify.get('/groups/:code', async (request, reply) => {
         const { code } = request.params;
         const { rows } = await client.query('SELECT count(*) FROM students JOIN sessions ON students.id = sessions.student_id where group_code = $1', [code]);
-        console.log(rows[0]);
         const group = rows[0];
         reply.send({ online: group.count });
     });
