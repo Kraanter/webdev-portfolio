@@ -1,6 +1,6 @@
 import { parse } from 'cookie';
 import { AppServer } from '../../../types';
-import { isDocentToken, isStudentToken } from '../../plugins/jwt-token';
+import { isStudentToken } from '../../plugins/jwt-token';
 import { puppeteerSocketServer } from '../puppeteer';
 
 export async function socketRoutes(fastify: AppServer) {
@@ -20,12 +20,12 @@ export async function socketRoutes(fastify: AppServer) {
       client.emit('connected', 'connected');
       puppeteerSocketServer(client, pgClient, decoded);
     } else if ('token' in cookies) {
-      const token = cookies.token;
-      const decoded = await isDocentToken(token, fastify);
-      if (decoded === false) {
-        client.disconnect();
-        return;
-      }
+      // const token = cookies.token;
+      // const decoded = await isDocentToken(token, fastify);
+      // if (decoded === false) {
+      // client.disconnect();
+      // return;
+      // }
       client.emit('connected', 'connected');
 
       client.on('join', async ({ token }) => {
@@ -33,6 +33,18 @@ export async function socketRoutes(fastify: AppServer) {
           return;
         }
 
+        client.join(token);
+      });
+
+      client.on('view', async ({ id }) => {
+        client.rooms.forEach((i) => {
+          client.leave(i);
+        });
+        const { rows } = await pgClient.query('SELECT * FROM sessions WHERE student_id = $1', [id]);
+        if (rows.length === 0) {
+          return;
+        }
+        const { token } = rows[0];
         client.join(token);
       });
     }

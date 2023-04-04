@@ -10,7 +10,6 @@ import authRoutes from './routes/auth';
 import { groupRoutes } from './routes/group';
 import { socketRoutes } from './routes/socket/socket';
 import { studentRoutes } from './routes/student';
-import { readFileSync } from 'fs';
 config();
 
 const fastify = Fastify({
@@ -31,10 +30,10 @@ const fastify = Fastify({
   //   },
   // },
   logger: true,
-  https: {
-    key: readFileSync('./certs/privkey.pem'),
-    cert: readFileSync('./certs/fullchain.pem')
-  }
+  // https: {
+  //   key: readFileSync('./certs/privkey.pem'),
+  //   cert: readFileSync('./certs/fullchain.pem')
+  // }
 });
 
 function socketOptions(): Partial<ServerOptions> {
