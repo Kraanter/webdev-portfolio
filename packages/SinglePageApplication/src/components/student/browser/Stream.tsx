@@ -33,7 +33,7 @@ const Stream: React.FC = () => {
   );
 };
 
-const ImageStream = () => {
+export const ImageStream = () => {
   const ref = useRef<HTMLDivElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const [cursor, setCursor] = useState('default');

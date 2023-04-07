@@ -29,6 +29,16 @@ export async function groupRoutes(fastify: AppServer) {
     reply.send({ online: group.count });
   });
 
+  fastify.get('/groups/:code/students', async (request, reply) => {
+    const { code } = request.params as { code: string };
+    const { rows } = await client.query(
+      'SELECT students.username, students.id FROM students JOIN sessions ON students.id = sessions.student_id where group_code = $1',
+      [code]
+    );
+
+    reply.send(rows);
+  });
+
   fastify.post('/groups', async (request, reply) => {
     const { name } = request.query as GroupData;
 

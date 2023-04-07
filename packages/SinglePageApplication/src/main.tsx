@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Browser from './components/docent/Browser';
+import GroupView from './components/docent/GroupView';
 import StudentLogin from './components/student/login/Login';
 import './index.css';
 import Docent from './routes/Docent';
@@ -25,6 +27,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <Route path="/register" element={<Login register />} />
       <Route path="/docent" element={<RouteGuard />}>
         <Route path="" element={<Docent />} />
+      </Route>
+      <Route path="/docent/group/:groupCode" element={<RouteGuard />}>
+        <Route path="" element={<GroupView />} />
+      </Route>
+      <Route path="/docent/view/:userId" element={<RouteGuard />}>
+        <Route path="" element={<Browser />} />
       </Route>
       <Route path="/student/login" element={<StudentRouteGuard nonAuthenticated />}>
         <Route path="" element={<StudentLogin />} />
