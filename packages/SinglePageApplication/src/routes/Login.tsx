@@ -25,6 +25,9 @@ const Login: React.FC<LoginProps> = ({ register = false, logout = false }) => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (error !== '' && error !== ErrorMessages.FillAll) return;
+    const data = new FormData(e.currentTarget);
+    console.log(Object.fromEntries(data));
+    const formData = { username: data.get('username') as string, password: data.get('password') as string };
     if (formData.username === '' || formData.password === '') {
       setError(ErrorMessages.FillAll);
       return;
@@ -34,7 +37,8 @@ const Login: React.FC<LoginProps> = ({ register = false, logout = false }) => {
     const success = await fetchUser(type, formData);
 
     if (success) {
-      navigate('/');
+      console.log('success');
+      navigate('/', { replace: true });
       return;
     }
     setError(

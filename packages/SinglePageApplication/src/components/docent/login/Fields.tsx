@@ -92,6 +92,7 @@ const PassField: React.FC<PassFieldProps> = ({ setPassword, placeholder }) => {
       <input
         type={show ? 'text' : 'password'}
         name="password"
+        id="password"
         onChange={(e) => setValue(e.target.value.replace(/\s+/g, ' ').trim())}
         placeholder={placeholder || 'Wachtwoord'}
         className="
@@ -132,6 +133,7 @@ const NameInput: React.FC<NameInputProps> = ({ setUsername }) => {
       <input
         type="text"
         name="username"
+        id="username"
         onChange={(e) => setValue(e.target.value.replace(/\s+/g, ' ').trim())}
         placeholder="Naam"
         className="
