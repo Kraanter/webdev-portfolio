@@ -36,7 +36,8 @@ export async function puppeteerSocketServer(
     await client.join(roomId);
 
     client.emit('stream', 'connected');
-    client.to(group_code).emit('change', group_code);
+    client.to(group_code).emit('change', { group_code, userId, type: 'connect' });
+    client.to(userId.toString()).emit('change', { group_code, userId, type: 'connect' });
 
     client.on('disconnect', async () => {
       // If the client disconnects, close the browser but wait 2.5 seconds first to see if the client reconnects
@@ -47,7 +48,8 @@ export async function puppeteerSocketServer(
     const disconnect = async () => {
       await removeSession(roomId, pgClient);
       client.disconnect();
-      client.to(group_code).emit('change', group_code);
+      client.to(group_code).emit('change', { group_code, userId, type: 'disconnect' });
+      client.to(userId.toString()).emit('change', { group_code, userId, type: 'disconnect' });
     };
 
     client.on('view', async ({ viewport, url }: { viewport: Viewport; url: string }) => {

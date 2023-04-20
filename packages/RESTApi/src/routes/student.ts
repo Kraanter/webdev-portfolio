@@ -9,8 +9,12 @@ export async function studentRoutes(fastify: AppServer) {
     const user = request.user as UserData;
     if (user && 'type' in user && user.type === 1) {
       const resp: AuthRepsonse = { decoded: user, authenticated: true };
-      reply.send(resp);
-      return;
+      // check if student is in database
+      const { rows } = await client.query('SELECT * FROM students WHERE id = $1', [user.id]);
+      if (rows.length !== 0) {
+        reply.send(resp);
+        return;
+      }
     }
     reply.clearCookie('student_token');
     reply.send({ authenticated: false, message: 'Invalid token' });

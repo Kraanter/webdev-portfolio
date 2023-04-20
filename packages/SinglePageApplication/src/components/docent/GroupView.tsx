@@ -16,7 +16,6 @@ const GroupView: React.FC = () => {
     fetch(`/api/groups/${groupCode}/students`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setData(data);
       });
   }, []);

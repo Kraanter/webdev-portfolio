@@ -40,12 +40,19 @@ export async function socketRoutes(fastify: AppServer) {
         client.rooms.forEach((i) => {
           client.leave(i);
         });
-        const { rows } = await pgClient.query('SELECT * FROM sessions WHERE student_id = $1', [id]);
+        const { rows } = await pgClient.query(
+          'SELECT * FROM sessions  JOIN students ON students.id = sessions.student_id WHERE student_id = $1',
+          [id]
+        );
         if (rows.length === 0) {
           return;
         }
-        const { token } = rows[0];
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const { token, group_code } = rows[0];
+        client.join(group_code);
         client.join(token);
+
+        console.log(client.rooms);
       });
     }
   });

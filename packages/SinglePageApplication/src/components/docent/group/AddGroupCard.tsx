@@ -43,7 +43,7 @@ const AddGroupCard: React.FC<AddGroupCardProps> = ({ addGroup }) => {
           <label className="text-xl font-bold text-gray-900">Group Name</label>
           <input
             name="name"
-            className="border border-gray-200 rounded-md p-2"
+            className="border border-gray-200 rounded-md w-full p-2"
             type="text"
             // Clear input field after submit because of e.currentTarget.reset() not working in form onSubmit
             onSubmit={({ currentTarget }) => (currentTarget.value = '')}

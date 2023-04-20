@@ -29,6 +29,19 @@ export async function groupRoutes(fastify: AppServer) {
     reply.send({ online: group.count });
   });
 
+  fastify.delete('/groups/:code', async (request, reply) => {
+    const { code } = request.params as { code: string };
+    const { id } = request.user as UserData;
+    if (id !== 1) reply.code(401).send({ error: 'Unauthorized' });
+    const { rows } = await client.query('DELETE FROM groups WHERE code = $1 RETURNING *', [code]);
+    const group = rows[0] as GroupData;
+    if (!group) {
+      reply.code(500).send({ error: 'Could not delete group' });
+      return;
+    }
+    reply.send(group);
+  });
+
   fastify.get('/groups/:code/students', async (request, reply) => {
     const { code } = request.params as { code: string };
     const { rows } = await client.query(
